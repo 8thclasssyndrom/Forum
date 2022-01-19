@@ -7,10 +7,10 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from main.models import Fandom, Fanfic, Comment, Like
+from main.models import Fandom, Fanfic, Comment, Like, Favorite
 from main.permissions import IsAuthor
 from main.serializers import FandomSerializer, FanficSerializer, FanficListSerializer, CreateRatingSerializer, \
-    CommentCreateSerializer, LikeSerializer
+    CommentCreateSerializer, LikeSerializer, FavoriteSerializer
 
 
 class FandomViewSet(ModelViewSet):
@@ -91,7 +91,6 @@ class RatingView(CreateAPIView):
         return {'request': self.request}
 
 
-
 class LikeView(ModelViewSet):
     """Добавление лайков"""
     queryset = Like.objects.all()
@@ -101,3 +100,8 @@ class LikeView(ModelViewSet):
     def get_serializer_context(self):
         return {'request': self.request}
 
+
+class FavoriteView(CreateAPIView):
+    queryset = Favorite.objects.all()
+    serializer_class = FavoriteSerializer
+    permission_classes = [IsAuthenticated, ]

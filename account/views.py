@@ -51,7 +51,7 @@ class ChangePasswordView(APIView):
         serializer = ChangePasswordSerializer(data=data,
                                               context={'request': request})
         serializer.is_valid(raise_exception=True)
-        serializer.set_new_pass()
+        serializer.set_new_password()
         return Response('Пароль успешно изменён')
 
 

@@ -9,16 +9,16 @@ schema_view = get_schema_view(
     openapi.Info(
         title='Forum FF',
         description='Fanfic forum',
-        default_version=''
+        default_version='api/v1',
     ),
-    public=True
+    public=True,
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/docs/', schema_view.with_ui('swagger')),
-    path('api/v1/', include('main.urls')),
-    path('api/v1/account/', include('account.urls')),
+    path('api/vi/docs/', schema_view.with_ui('swagger')),
+    path('api/vi/', include('main.urls')),
+    path('api/vi/account/', include('account.urls')),
 
 
 ]

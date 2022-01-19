@@ -1,8 +1,10 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from django.db.models import Avg
 
 from main.models import Fanfic, Fandom, Comment, Rating, Like, Favorite
 
+User = get_user_model
 
 class FandomSerializer(serializers.ModelSerializer):
     class Meta:
@@ -39,23 +41,6 @@ class CommentSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-class FanficSerializer(serializers.ModelSerializer):
-    """Фанфик"""
-    # comments = CommentSerializer(many=True)
-
-    class Meta:
-        model = Fanfic
-        fields = ['name', 'user', 'language', 'image', 'content', 'fandom']
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['comments'] = CommentSerializer(instance.comments.all(),
-                                                       many=True).data
-        representation['like'] = instance.like.all().count()
-        # representation['rating'] = instance.rating.aggregate(Avg('star')).get("star_avg")
-        return representation
-
-
 class CreateRatingSerializer(serializers.ModelSerializer):
     """Добавление рейтинга пользователем"""
     class Meta:
@@ -86,6 +71,12 @@ class LikeSerializer(serializers.ModelSerializer):
         return like
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+
+
 class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
@@ -95,4 +86,20 @@ class FavoriteSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['user'] = instance.user.email
         representation['fanfic'] = instance.fanfic.name
+        return representation
+
+
+class FanficSerializer(serializers.ModelSerializer):
+    """Фанфик"""
+    # comments = CommentSerializer(many=True)
+
+    class Meta:
+        model = Fanfic
+        fields = ['name', 'language', 'image', 'content', 'fandom', 'user']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['comments'] = CommentSerializer(instance.comments.all(),
+                                                       many=True).data
+        representation['likes'] = LikeSerializer(instance.likes.all(), many=True).data
         return representation
